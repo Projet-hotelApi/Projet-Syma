@@ -25,6 +25,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   useCreateIndex: true,
   useFindAndModify: false,
 });
+
 app.listen(process.env.PORT, () => {
   console.log("Server Started");
 });
