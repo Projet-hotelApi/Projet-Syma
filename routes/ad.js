@@ -27,7 +27,7 @@ cloudinary.config({
 router.post("/ad/publish", isAuthenticated, async (req, res) => {
   try {
     // console.log("fields", req.fields); // OK
-    // console.log("files", req.files); // OK
+    console.log("files", req.files); // OK
     const price = req.fields.price;
     const description = req.fields.description;
     const title = req.fields.title;
