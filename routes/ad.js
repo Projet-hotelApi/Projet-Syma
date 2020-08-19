@@ -98,8 +98,6 @@ router.post("/ad/publish", isAuthenticated, async (req, res) => {
                   size: newAd.size,
                   creator: req.user.username,
                 });
-              } else {
-                res.status(400).json({ message: "Error" });
               }
             });
           } else {
