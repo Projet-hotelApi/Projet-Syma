@@ -18,34 +18,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-router.post("/essai/upload", (req, res) => {
-  const picture = Object.keys(req.files);
-  //console.log("picture", picture); // OK
-  let results = {};
-  if (picture.length === 0) {
-    res.send("No file uploaded!");
-    return;
-  }
-  picture.forEach(async (fileKey) => {
-    try {
-      const file = req.files[fileKey];
-      //console.log(file); // OK
-      const result = await cloudinary.uploader.upload(file.path);
-      // console.log("result", result);
-      results[fileKey] = {
-        success: true,
-        result: result,
-      };
-      if (Object.keys(results).length === picture.length) {
-        // tous les uploads sont terminés, on peut donc envoyer la réponse au client
-        return res.json(results);
-      }
-    } catch (error) {
-      return res.json({ error: error.message });
-    }
-  });
-});
-
 // body - form-data
 // Pb de photos :
 // UPDATER PLUSIEURS IMAGES, CHECKER COURS SUR CLOUDINARY !!
@@ -59,17 +31,18 @@ router.post("/ad/publish", isAuthenticated, async (req, res) => {
     const price = req.fields.price;
     const description = req.fields.description;
     const title = req.fields.title;
-    const picture = req.files.picture.path;
+    const picture = Object.keys(req.files);
     const condition = req.fields.condition;
     const brand = req.fields.brand;
     const size = req.fields.size;
     //console.log("size", size);
     //console.log("price", price);
-    //console.log("picture", picture);
-    //console.log("description", description);
+    console.log("picture", picture);
+    // console.log("description", description);
     //console.log("brand", brand);
     //console.log("title", title);
     //console.log("condition", condition);
+    let results = {};
     if (
       picture &&
       price &&
@@ -81,43 +54,53 @@ router.post("/ad/publish", isAuthenticated, async (req, res) => {
     ) {
       if (title.length > 3) {
         if (description.length > 10) {
-          if (picture.length >= 1) {
-            // && picture.length <= 5
-            const uploadweb = await cloudinary.uploader.upload(picture);
-            //console.log(uploadweb);
-            const newAd = new Ad({
-              title: title,
-              description: description,
-              price: price,
-              picture: uploadweb.secure_url,
-              creator: req.user,
-              created: new Date(),
-              condition: condition,
-              brand: brand,
-              size: size,
-            });
-            await newAd.save();
-            // Obtenir req.fields.username & req.fields.email
-            //  const data = {
-            //    from : "Syma <syma@" + MAILGUN_DOMAIN + ">",
-            //    to : req.fields.email,
-            //    subject : "SyMa - Your recently created account",
-            //    text : "Dear" + req.fields.firstName + "\br Un article a été ajouté ! Voici les détails : "
-            //  }
-            //  mailgun.messages().send(data, (error, body) => {
-            //   console.log(body);
-            //   console.log(error);
-            // });
-            res.status(200).json({
-              id: newAd.id,
-              title: newAd.title,
-              description: newAd.description,
-              price: newAd.price,
-              picture: newAd.picture,
-              condition: newAd.condition,
-              brand: newAd.brand,
-              size: newAd.size,
-              creator: req.user.username,
+          if (picture.length >= 1 && picture.length <= 5) {
+            picture.forEach(async (fileKey) => {
+              const file = req.files[fileKey];
+              const result = await cloudinary.uploader.upload(file.path);
+              results[fileKey] = {
+                success: true,
+                result: result,
+              };
+              console.log(result);
+              if (Object.keys(results).length === picture.length) {
+                const newAd = new Ad({
+                  title: title,
+                  description: description,
+                  price: price,
+                  picture: result.secure_url,
+                  creator: req.user,
+                  created: new Date(),
+                  condition: condition,
+                  brand: brand,
+                  size: size,
+                });
+                await newAd.save();
+                // Obtenir req.fields.username & req.fields.email
+                //  const data = {
+                //    from : "Syma <syma@" + MAILGUN_DOMAIN + ">",
+                //    to : req.fields.email,
+                //    subject : "SyMa - Your recently created account",
+                //    text : "Dear" + req.fields.firstName + "\br Un article a été ajouté ! Voici les détails : "
+                //  }
+                //  mailgun.messages().send(data, (error, body) => {
+                //   console.log(body);
+                //   console.log(error);
+                // });
+                res.status(200).json({
+                  id: newAd.id,
+                  title: newAd.title,
+                  description: newAd.description,
+                  price: newAd.price,
+                  picture: newAd.picture,
+                  condition: newAd.condition,
+                  brand: newAd.brand,
+                  size: newAd.size,
+                  creator: req.user.username,
+                });
+              } else {
+                res.status(400).json({ message: "Error" });
+              }
             });
           } else {
             res.status(400).json({

@@ -221,6 +221,14 @@ router.post("/user/search", async (req, res) => {
   }
 });
 
+router.get("/user/:id", isAuthenticated, async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
+  }
+});
+
 router.post("/user/update-account/:id", isAuthenticated, async (req, res) => {
   try {
     if (req.params.id) {
