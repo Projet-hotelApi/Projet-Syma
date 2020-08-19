@@ -208,7 +208,7 @@ router.post("/user/search", async (req, res) => {
   }
 });
 
-router.get("/user/informations/:id", async (req, res) => {
+router.get("/user/informations/:id", isAuthenticated, async (req, res) => {
   try {
     if (req.params.id) {
       const userFounded = await User.findById(req.params.id);
