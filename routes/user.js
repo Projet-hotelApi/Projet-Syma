@@ -37,45 +37,32 @@ router.post("/user/sign-up", async (req, res) => {
         .json({ message: "Username already used, please find another one" });
     } else {
       const password = req.fields.password;
-      const passwordConfirm = req.fields.passwordConfirm;
       const salt = uid2(15);
       const hash = SHA256(password + salt).toString(encBase64);
       const token = uid2(15);
       const email = req.fields.email;
       const username = req.fields.username;
-      const description = req.fields.description;
-      const picture = req.files.picture.path;
       const firstName = req.fields.firstName;
       const lastName = req.fields.lastName;
       const postalCode = req.fields.postalCode;
       const city = req.fields.city;
       const address = req.fields.address;
-      if (password !== passwordConfirm) {
-        res
-          .status(400)
-          .json({ message: "Error, the passwords are not identical" });
-      } else if (
+      if (
         email &&
         username &&
-        description &&
-        picture &&
         firstName &&
         lastName &&
         postalCode &&
         city &&
         address &&
-        password &&
-        passwordConfirm
+        password
       ) {
-        const result = await cloudinary.uploader.upload(picture);
         const newUser = await new User({
           token: token,
           hash: hash,
           salt: salt,
           email: email,
           username: username,
-          description: description,
-          picture: result.secure_url,
           // globalNote: globalNote,
           // reviews: {
           //   ratingValue: ratingValue,
