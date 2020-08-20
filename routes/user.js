@@ -120,9 +120,8 @@ router.post("/user/log-in", async (req, res) => {
       ) {
         res.status(200).json({
           id: userFounded.id,
+          username: userFounded.username,
           token: userFounded.token,
-          description: userFounded.description,
-          picture: userFounded.picture[0].secure_url,
         });
       } else {
         res.status(401).json({ message: "Unauthorized" });
