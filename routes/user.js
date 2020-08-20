@@ -221,6 +221,8 @@ router.get("/user/informations/:id", isAuthenticated, async (req, res) => {
 });
 
 router.post("/user/update-account/:id", isAuthenticated, async (req, res) => {
+  console.log("fields", req.fields);
+  console.log("file", req.files);
   try {
     if (req.params.id) {
       const userFounded = await User.findById(req.params.id);
