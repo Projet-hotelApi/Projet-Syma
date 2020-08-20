@@ -221,7 +221,12 @@ router.get("/user/informations/:id", isAuthenticated, async (req, res) => {
 });
 
 router.post("/user/update-account/:id", isAuthenticated, async (req, res) => {
-  console.log("fields", req.fields);
+  console.log(
+    "fields",
+    req.fields.email,
+    req.fields.username,
+    req.fields.postalCode
+  );
   console.log("file", req.files);
   try {
     if (req.params.id) {
@@ -233,7 +238,7 @@ router.post("/user/update-account/:id", isAuthenticated, async (req, res) => {
         req.fields.city ||
         req.fields.address ||
         req.fields.description ||
-        req.files.picture
+        req.files.photo
       ) {
         if (req.fields.email) {
           // OK
@@ -274,21 +279,19 @@ router.post("/user/update-account/:id", isAuthenticated, async (req, res) => {
           userFounded.personnal.address = req.fields.address;
           await userFounded.save();
         }
-        if (req.files.picture) {
+        if (req.files.photo) {
           console.log(1);
-          console.log(req.files.picture);
+          console.log(req.files.photo.path);
           const userFounded = await User.findById(req.params.id);
           console.log(2);
-          const result = await cloudinary.uploader.upload(
-            req.files.picture.path
-          );
-          console.log(3);
+          const result = await cloudinary.uploader.upload(req.files.photo.path);
+          console.log(result.secure_url);
           // console.log("result", result.path);
-          userFounded.picture = result;
+          userFounded.picture.push(result.secure_url);
           console.log(4);
           await userFounded.save();
         }
-        res.status(200).json({ message: "Changes updated" });
+        res.status(200).json(userFounded);
       } else {
         res.status(400).json({ message: "Changes unauthorized" });
       }
