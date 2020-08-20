@@ -14,7 +14,6 @@ const API_KEY = process.env.MAILGUN_API_KEY;
 const DOMAIN = process.env.MAILGUN_DOMAIN;
 const mg = mailgun({ apiKey: API_KEY, domain: DOMAIN });
 // changer mailgun address
-// Changer clé cloudinary avec ses propres clés
 cloudinary.config({
   cloud_name: "dbxmpuzvk",
   api_key: process.env.CLOUDINARY_API_KEY,
