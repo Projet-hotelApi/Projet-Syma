@@ -275,6 +275,8 @@ router.post("/user/update-account/:id", isAuthenticated, async (req, res) => {
           await userFounded.save();
         }
         if (req.files.picture) {
+          console.log("coucou");
+          console.log(req.files.picture);
           const userFounded = await User.findById(req.params.id);
           const result = await cloudinary.uploader.upload(picture);
           console.log("result", result);
