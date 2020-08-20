@@ -225,6 +225,7 @@ router.post("/user/update-account/:id", isAuthenticated, async (req, res) => {
     if (req.params.id) {
       const userFounded = await User.findById(req.params.id);
       if (
+        req.fields.email ||
         req.fields.username ||
         req.fields.postalCode ||
         req.fields.city ||
@@ -232,6 +233,13 @@ router.post("/user/update-account/:id", isAuthenticated, async (req, res) => {
         req.fields.description ||
         req.files.picture
       ) {
+        if (req.fields.email) {
+          // OK
+          const userFounded = await User.findByIdAndUpdate(req.params.id, {
+            email: req.fields.email,
+          });
+          await userFounded.save();
+        }
         if (req.fields.username) {
           // OK
           const userFounded = await User.findByIdAndUpdate(req.params.id, {
