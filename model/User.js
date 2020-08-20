@@ -6,7 +6,8 @@ const User = mongoose.model("User", {
   email: { type: String, unique: true },
   username: { type: String, required: true },
   description: String,
-  picture: { type: String, default: "" },
+  picture: [],
+  // picture: { type: String, default: "" },
   globalNote: Number,
   reviews: {
     ratingValue: Number,
