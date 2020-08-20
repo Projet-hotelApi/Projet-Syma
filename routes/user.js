@@ -275,14 +275,15 @@ router.post("/user/update-account/:id", isAuthenticated, async (req, res) => {
           await userFounded.save();
         }
         if (req.files.picture) {
-          console.log("coucou");
+          console.log(1);
           console.log(req.files.picture);
           const userFounded = await User.findById(req.params.id);
+          console.log(2);
           const result = await cloudinary.uploader.upload(req.files.picture);
-          console.log("result", result);
+          console.log(3);
           // console.log("result", result.path);
           userFounded.picture = result;
-          console.log("userF picture", userFounded.picture);
+          console.log(4);
           await userFounded.save();
         }
         res.status(200).json({ message: "Changes updated" });
