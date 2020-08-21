@@ -76,8 +76,12 @@ router.post("/ad/publish", isAuthenticated, async (req, res) => {
                   size: size,
                 });
                 await newAd.save();
-                const userFounded = await User.findById(req.user._id);
-                await userFounded.articles.push(newAd);
+                const user = await User.findById(req.user._id);
+                let tab = user.articles;
+                tab.push(newAd);
+                await User.findByIdAndUpdate(req.user._id, {
+                  articles: tab,
+                });
 
                 // Obtenir req.fields.username & req.fields.email
                 //  const data = {
