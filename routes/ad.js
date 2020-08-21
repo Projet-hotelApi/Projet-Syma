@@ -142,8 +142,8 @@ router.post("/ad/publish", isAuthenticated, async (req, res) => {
 // permettra au clic sur le creator de faire la recherche user/search par username !
 router.get("/ad", async (req, res) => {
   try {
-    const ad = await Ad.find();
-    // json(ad); // renvoie creator : id
+    const ad = await Ad.find().populate("creator");
+    //  res.status(200).json(ad);
     res.status(200).json(ad);
     // json({
     //   id: ad.id,
@@ -151,11 +151,11 @@ router.get("/ad", async (req, res) => {
     //   description: ad.description,
     //   price: ad.price,
     //   picture: ad.picture,
-    //   creator: ad.creator,
-    //   // {
-    //   //   username: ad.creator.username,
-    //   //   id: ad.creator.id,
-    //   // },
+    //   // ad.creator,
+    //   creator: {
+    //     username: ad.creator.username,
+    //     id: ad.creator.id,
+    //   },
     //   created: ad.created,
     //   condition: ad.condition,
     //   brand: ad.brand,
