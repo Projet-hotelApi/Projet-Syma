@@ -3,8 +3,8 @@ const formidable = require("express-formidable");
 const router = express.Router();
 const cloudinary = require("cloudinary").v2;
 
-const userRoute = require("./user");
-const User = require("../routes/user");
+//const userRoute = require("./user");
+const user = require("../routes/user");
 const Ad = require("../model/Ad");
 const User = require("../model/User");
 
