@@ -144,22 +144,23 @@ router.get("/ad", async (req, res) => {
   try {
     const ad = await Ad.find();
     // json(ad); // renvoie creator : id
-    res.status(200).json({
-      id: ad.id,
-      title: ad.title,
-      description: ad.description,
-      price: ad.price,
-      picture: ad.picture,
-      creator: ad.creator,
-      //   // {
-      //   //   username: ad.creator.username,
-      //   //   id: ad.creator.id,
-      //   // },
-      created: ad.created,
-      condition: ad.condition,
-      brand: ad.brand,
-      size: ad.size,
-    });
+    res.status(200).json(ad);
+    // json({
+    //   id: ad.id,
+    //   title: ad.title,
+    //   description: ad.description,
+    //   price: ad.price,
+    //   picture: ad.picture,
+    //   creator: ad.creator,
+    //   // {
+    //   //   username: ad.creator.username,
+    //   //   id: ad.creator.id,
+    //   // },
+    //   created: ad.created,
+    //   condition: ad.condition,
+    //   brand: ad.brand,
+    //   size: ad.size,
+    // });
   } catch (error) {
     console.log(error.message);
     res.status(400).json({ message: error.message });
