@@ -78,10 +78,10 @@ router.post("/ad/publish", isAuthenticated, async (req, res) => {
                 });
                 await newAd.save();
                 const user = await User.findById(req.user._id);
-                let tab = user.articles;
-                tab.push(newAd._id);
+                let articles = user.articles;
+                articles.push(newAd._id);
                 await User.findByIdAndUpdate(req.user._id, {
-                  articles: tab,
+                  articles: articles,
                 });
 
                 //await user.articles.push(newAd)
