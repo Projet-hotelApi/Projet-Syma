@@ -197,6 +197,7 @@ router.post("/user/search", async (req, res) => {
         //   title, description, price, brand, picture, condition, brand & size
         // ]
       });
+      res.status(200).json(userFounded);
     } else {
       res.status(400).json({ message: "Member not found" });
     }

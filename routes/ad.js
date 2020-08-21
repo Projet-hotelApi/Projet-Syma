@@ -76,6 +76,9 @@ router.post("/ad/publish", isAuthenticated, async (req, res) => {
                   size: size,
                 });
                 await newAd.save();
+                const userFounded = await User.findById(req.user._id);
+                await userFounded.articles.push(newAd);
+
                 // Obtenir req.fields.username & req.fields.email
                 //  const data = {
                 //    from : "Syma <syma@" + MAILGUN_DOMAIN + ">",
