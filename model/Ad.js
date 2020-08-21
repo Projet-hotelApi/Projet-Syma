@@ -11,7 +11,7 @@ const User = mongoose.model("Ad", {
   },
   description: String,
   price: Number,
-  picture: Object,
+  picture: [String],
   // état : neuf avec étiquette / neuf sans étiquette / usé / moyen /
   condition: String,
   brand: String,

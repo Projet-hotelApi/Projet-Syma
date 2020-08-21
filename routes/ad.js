@@ -27,24 +27,24 @@ cloudinary.config({
 router.post("/ad/publish", isAuthenticated, async (req, res) => {
   try {
     // console.log("fields", req.fields); // OK
-    console.log("files", req.files); // OK
+    //console.log("files", req.files); // OK
     const price = req.fields.price;
     const description = req.fields.description;
     const title = req.fields.title;
-    const picture = Object.keys(req.files);
+    const tabKeysPicture = Object.keys(req.files);
     const condition = req.fields.condition;
     const brand = req.fields.brand;
     const size = req.fields.size;
     //console.log("size", size);
     //console.log("price", price);
-    console.log("picture", picture);
+    //console.log("picture", picture);
     // console.log("description", description);
     //console.log("brand", brand);
     //console.log("title", title);
     //console.log("condition", condition);
     let results = {};
     if (
-      picture &&
+      tabKeysPicture &&
       price &&
       description &&
       title &&
@@ -54,22 +54,22 @@ router.post("/ad/publish", isAuthenticated, async (req, res) => {
     ) {
       if (title.length > 3) {
         if (description.length > 10) {
-          if (picture.length >= 1 && picture.length <= 5) {
-            picture.forEach(async (fileKey) => {
+          if (tabKeysPicture.length >= 1 && tabKeysPicture.length <= 5) {
+            tabKeysPicture.forEach(async (fileKey) => {
               const file = req.files[fileKey];
               const result = await cloudinary.uploader.upload(file.path);
+              console.log("result de l'upload tsemort ===>", result);
               results[fileKey] = {
                 success: true,
                 result: result,
               };
-              console.log(result);
-              if (Object.keys(results).length === picture.length) {
+              if (Object.keys(results).length === tabKeysPicture.length) {
                 const newAd = new Ad({
                   title: title,
                   description: description,
                   price: price,
-                  picture: result.secure_url,
-                  creator: req.user,
+                  picture: [result.secure_url],
+                  creator: req.user._id,
                   created: new Date(),
                   condition: condition,
                   brand: brand,
@@ -158,7 +158,9 @@ router.get("/ad", async (req, res) => {
 
 // NE MARCHE PAS
 // PAR TITLE => id dans route ??
-router.post("/ad/:id", async (req, res) => {
+//router.post("/ad/:id", async (req, res)
+//router.post("/ad/publish/upload/:id", async (req, res) => {
+router.get("/ad/informations/:id", async (req, res) => {
   try {
     if (req.params.id) {
       const ad = await Ad.find({ title: req.fields.title });
@@ -173,7 +175,7 @@ router.post("/ad/:id", async (req, res) => {
 });
 
 // Updater les pictures
-router.post("/ad/update/:id", isAuthenticated, async (req, res) => {
+router.post("/ad/publish/update/:id", isAuthenticated, async (req, res) => {
   try {
     if (req.params.id) {
       if (
