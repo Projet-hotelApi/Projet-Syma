@@ -144,6 +144,7 @@ router.get("/ad", async (req, res) => {
   try {
     const ad = await Ad.find().populate("creator");
     //  res.status(200).json(ad);
+    console.log(ad);
     res.status(200).json(ad);
     // json({
     //   id: ad.id,
@@ -174,7 +175,7 @@ router.get("/ad", async (req, res) => {
 router.get("/ad/informations/:id", async (req, res) => {
   try {
     if (req.params.id) {
-      const ad = await Ad.find({ title: req.fields.title });
+      const ad = await Ad.findById(req.params.id);
       res.status(200).json(ad);
     } else {
       res.status(400).json({ message: error.message });
