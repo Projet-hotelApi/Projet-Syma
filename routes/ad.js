@@ -6,6 +6,7 @@ const cloudinary = require("cloudinary").v2;
 const userRoute = require("./user");
 const User = require("../routes/user");
 const Ad = require("../model/Ad");
+const User = require("../model/User");
 
 const app = express();
 app.use(formidable({ multiples: true }));
@@ -78,10 +79,12 @@ router.post("/ad/publish", isAuthenticated, async (req, res) => {
                 await newAd.save();
                 const user = await User.findById(req.user._id);
                 let tab = user.articles;
-                tab.push(newAd);
+                tab.push(newAd._id);
                 await User.findByIdAndUpdate(req.user._id, {
                   articles: tab,
                 });
+
+                //await user.articles.push(newAd)
 
                 // Obtenir req.fields.username & req.fields.email
                 //  const data = {
