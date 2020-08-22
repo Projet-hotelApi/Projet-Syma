@@ -208,7 +208,9 @@ router.post("/user/search", async (req, res) => {
 router.get("/user/informations/:id", isAuthenticated, async (req, res) => {
   try {
     if (req.params.id) {
-      const userFounded = await User.findById(req.params.id);
+      const userFounded = await User.findById(req.params.id).populate(
+        "articles"
+      );
       res.status(200).json(userFounded);
     } else {
       res.status(400).json({ message: "User not founded" });
