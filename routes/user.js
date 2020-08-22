@@ -181,22 +181,20 @@ router.post("/user/search", async (req, res) => {
   try {
     const userFounded = await await User.findOne({
       username: req.fields.username,
-    });
+    }).populate("articles");
     if (userFounded) {
-      res.status(200).json({
-        username: userFounded.username,
-        description: userFounded.description,
-        city: userFounded.personnal.city,
-        picture: userFounded.picture[0].secure_url,
-        globalNote: userFounded.globalNote,
-        reviews: {
-          ratingValue: userFounded.reviews.ratingValue,
-          decription: userFounded.reviews.description,
-        },
-        // articles : [
-        //   title, description, price, brand, picture, condition, brand & size
-        // ]
-      });
+      // res.status(200).json({
+      //   username: userFounded.username,
+      //   description: userFounded.description,
+      //   city: userFounded.personnal.city,
+      //   picture: userFounded.picture[0],
+      //   globalNote: userFounded.globalNote,
+      //   reviews: {
+      //     ratingValue: userFounded.reviews.ratingValue,
+      //     decription: userFounded.reviews.description,
+      //   },
+      //   articles: [userFounded.articles],
+      // });
       res.status(200).json(userFounded);
     } else {
       res.status(400).json({ message: "Member not found" });
