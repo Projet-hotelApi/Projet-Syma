@@ -334,14 +334,16 @@ router.post("/ad/sort", async (req, res) => {
 });
 
 // PAS TESTER
-router.post("ad/user/:id", async (req, res) => {
+router.get("/ad/user/:id", async (req, res) => {
   try {
     if (req.params.id) {
-      const userFounded = await User.findById(req.params.id);
-      if (userFounded.articles === 0) {
-        res.status(200).json({ message: "This user hasn't posted an ad" });
+      const userFounded = await User.findById(req.params.id).populate(
+        "articles"
+      );
+      if (!userFounded) {
+        res.status(200).json({ message: "User not founded" });
       } else {
-        res.status(200).json(userFounded.articles);
+        res.status(200).json(userFounded);
       }
     } else {
       res.status(400).json({ message: "Missing parameters" });
