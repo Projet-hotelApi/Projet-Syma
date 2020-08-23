@@ -325,7 +325,7 @@ router.get("/ad/sort", async (req, res) => {
       sort = { price: "asc" };
     }
 
-    const ad = await Ad.find(filters).sort(sort);
+    const ad = await Ad.find(filters).sort(sort).populate("creator");
     res.status(200).json(ad);
   } catch (error) {
     console.log(error.message);
