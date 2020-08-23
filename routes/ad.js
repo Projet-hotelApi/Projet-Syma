@@ -293,7 +293,7 @@ router.get("/ad/delete/:id", isAuthenticated, async (req, res) => {
 });
 
 // PAge & limit ? Combien annonces par pages ??? ou front ??
-router.post("/ad/sort", async (req, res) => {
+router.get("/ad/sort", async (req, res) => {
   try {
     const filters = {};
     if (req.query.title) {

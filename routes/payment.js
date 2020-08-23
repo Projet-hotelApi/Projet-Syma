@@ -17,11 +17,7 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
     const response = await stripe.charges.create({
       amount: req.fields.price,
       currency: "eur",
-      description:
-        "Votre achat concerne " +
-        req.fields.title +
-        " au membre : " +
-        req.fields.user,
+      description: "Acheter " + req.fields.title + " à : " + req.fields.user,
       source: stripeToken,
     });
     // supprime add (reference pour ad/delete/id) - faire copier / coller

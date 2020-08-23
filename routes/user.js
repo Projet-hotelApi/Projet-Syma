@@ -179,7 +179,7 @@ router.post("/user/delete", isAuthenticated, async (req, res) => {
 // peut être parce qu'elle est vide ? a vérifier
 router.post("/user/search", async (req, res) => {
   try {
-    const userFounded = await await User.findOne({
+    const userFounded = await User.findOne({
       username: req.fields.username,
     }).populate("articles");
     if (userFounded) {
