@@ -193,7 +193,6 @@ router.post("/ad/publish/update/:id", isAuthenticated, async (req, res) => {
       if (
         req.fields.title ||
         req.fields.description ||
-        req.fields.picture ||
         req.fields.price ||
         req.fields.brand ||
         req.fields.condition ||
@@ -221,11 +220,22 @@ router.post("/ad/publish/update/:id", isAuthenticated, async (req, res) => {
           });
           await adFounded.save();
         }
-        if (req.fields.picture) {
-          const adFounded = await Ad.findByIdAndUpdate(req.params.id, {
-            picture: req.fields.picture,
-          });
+        if (req.files.picture) {
+          const adFounded = await Ad.findById(req.params.id);
+          const result = await cloudinary.uploader.upload(
+            req.files.picture.path
+          );
+          //console.log(result);
+          //console.log(req.files);
+          //console.log(req.files.picture);
+          adFounded.picture.push(result.secure_url);
+          // cannot read property push of null
           await adFounded.save();
+
+          // const adFounded = await Ad.findByIdAndUpdate(req.params.id, {
+          //   picture: req.fields.picture,
+          // });
+          // await adFounded.save();
         }
         if (req.fields.brand) {
           // OK
@@ -251,8 +261,7 @@ router.post("/ad/publish/update/:id", isAuthenticated, async (req, res) => {
         res.status(200).json({ message: "Your offer has been updated" });
       } else {
         res.status(400).json({
-          message:
-            "You can only change the title, description, price and picture",
+          message: "Changes unauthorized",
         });
       }
     } else {
