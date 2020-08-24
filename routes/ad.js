@@ -3,6 +3,8 @@ const formidable = require("express-formidable");
 const router = express.Router();
 const cloudinary = require("cloudinary").v2;
 
+const stripe = require("stripe")("sk_test_votreCléPrivée");
+
 //const userRoute = require("./user");
 const user = require("../routes/user");
 const Ad = require("../model/Ad");
@@ -357,6 +359,32 @@ router.get("/ad/user/:id", async (req, res) => {
     } else {
       res.status(400).json({ message: "Missing parameters" });
     }
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.post("/payment/:id", isAuthenticated, async (req, res) => {
+  try {
+    // const userFounded = await User.findById(req.params.id);
+    // if (userFounded) {
+    //   const adFounded = await Ad.findById(req.params.id);
+    //   if (adFounded) {
+    const stripeToken = req.fields.stripeToken;
+    const response = await stripe.charges.create({
+      amount: req.fields.price,
+      currency: "eur",
+      description: "Acheter " + req.fields.title + " à : " + req.fields.user,
+      source: stripeToken,
+    });
+    // sauvegarder la transaction => commandes, model User ??
+    // await userFounded.commandes.push(response);
+    // supprime add (reference pour ad/delete/id) - faire copier / coller
+    console.log(response.status);
+    res.status(200).json(response);
+    //   }
+    // }
   } catch (error) {
     console.log(error.message);
     res.status(400).json({ message: error.message });

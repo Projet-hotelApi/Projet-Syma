@@ -26,5 +26,11 @@ const User = mongoose.model("User", {
       ref: "Ad",
     },
   ],
+  commandes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Ad",
+    },
+  ],
 });
 module.exports = User;

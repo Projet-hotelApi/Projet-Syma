@@ -6,10 +6,7 @@ const app = express();
 app.use(formidable());
 
 // STRIPPPPPPPEEEEEEEEE
-const stripe = require("stripe")("sk_test_votreCléPrivée");
 // const stripe = XXXX
-
-const isAuthenticated = require("../middleware/isAutenticated");
 
 router.post("/payment/:id", isAuthenticated, async (req, res) => {
   try {
