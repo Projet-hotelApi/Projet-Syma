@@ -352,12 +352,19 @@ router.get("/ad/sort", async (req, res) => {
 router.get("/ad/user/:id", async (req, res) => {
   try {
     if (req.params.id) {
-      const userFounded = await User.findById(req.params.id).populate({
-        path: "reviews",
-        populate: {
-          path: "articles",
-        },
-      });
+      const userFounded = await User.findById(req.params.id).populate(
+        "articles"
+      );
+      // populate({
+      //   path: "articles",
+      //   populate: { path: "reviews" },
+      // });
+      // populate({
+      //   path: "reviews",
+      //   populate: {
+      //     path: "articles",
+      //   },
+      // });
       if (!userFounded) {
         res.status(200).json({ message: "User not founded" });
       } else {
