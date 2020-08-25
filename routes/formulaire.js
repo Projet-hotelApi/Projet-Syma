@@ -1,18 +1,15 @@
 const express = require("express");
 const formidable = require("express-formidable");
-const cors = require("cors");
-
+const router = express.Router();
 const app = express();
 app.use(formidable());
-app.use(cors());
-
-// Faire un exemple de mail !
 
 const API_KEY = process.env.MAILGUN_API_KEY;
 const DOMAIN = process.env.MAILGUN_DOMAIN;
-const mailgun = require("mailgun-js")({ apiKey: API_KEY, domain: DOMAIN });
+const mg = require("mailgun-js")({ apiKey: API_KEY, domain: DOMAIN });
 
-app.post("/contact/formulaire", (req, res) => {
+router.post("/form", (req, res) => {
+  console.log(1);
   console.log(req.fields);
   const firstname = req.fields.firstname;
   const lastname = req.fields.lastname;
@@ -21,16 +18,20 @@ app.post("/contact/formulaire", (req, res) => {
   const message = req.fields.message;
 
   const data = {
-    from: req.fields.email,
-    to: "NOTRE ADRESSE MAIL",
+    from: email,
+    to: "dehedin.mathilde@gmail.com",
+    firstname: firstname,
+    lastname: lastname,
     subject: subject,
     text: message,
   };
-
-  mailgun.messages().send(data, (error, body) => {
+  mg.messages().send(data, (error, body) => {
     console.log(body);
     console.log(error);
   });
-
-  res.status(200).json({ message: "Your request has been sent" });
+  res
+    .status(200)
+    .json({ message: "Votre message a été envoyé. Nous vous remercions" });
 });
+
+module.exports = router;

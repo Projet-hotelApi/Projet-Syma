@@ -8,6 +8,8 @@ const mailgun = require("mailgun-js");
 //const mailgun = require("mailgun-js")({ apiKey: API_KEY, domain: DOMAIN });
 
 const User = require("../model/User");
+const Review = require("../model/Review");
+const review = require("../routes/review");
 const isAuthenticated = require("../middleware/isAuthenticated");
 
 const API_KEY = process.env.MAILGUN_API_KEY;
@@ -62,11 +64,6 @@ router.post("/user/sign-up", async (req, res) => {
           salt: salt,
           email: email,
           username: username,
-          // globalNote: globalNote,
-          // reviews: {
-          //   ratingValue: ratingValue,
-          //   description: description,
-          // },
           personnal: {
             firstName: firstName,
             lastName: lastName,
@@ -147,6 +144,9 @@ router.post("/user/delete", isAuthenticated, async (req, res) => {
         SHA256(req.fields.password + userFounded.salt).toString(encBase64) ===
         userFounded.hash
       ) {
+        // if (userFounded.articles.length !== 0) {
+        //   supprimer les annonces de l'utilisateur
+        // }
         await userFounded.deleteOne();
         // Obtenir req.fields.email + req.fields.name
         //  const data = {
@@ -174,27 +174,14 @@ router.post("/user/delete", isAuthenticated, async (req, res) => {
   }
 });
 
-// find articles
-// réponse :  "reviews": {} // trouver un moyen pour afficher les reviews = populate ?
-// peut être parce qu'elle est vide ? a vérifier
 router.post("/user/search", async (req, res) => {
   try {
     const userFounded = await User.findOne({
       username: req.fields.username,
-    }).populate("articles");
+    })
+      .populate("articles")
+      .populate("reviews");
     if (userFounded) {
-      // res.status(200).json({
-      //   username: userFounded.username,
-      //   description: userFounded.description,
-      //   city: userFounded.personnal.city,
-      //   picture: userFounded.picture[0],
-      //   globalNote: userFounded.globalNote,
-      //   reviews: {
-      //     ratingValue: userFounded.reviews.ratingValue,
-      //     decription: userFounded.reviews.description,
-      //   },
-      //   articles: [userFounded.articles],
-      // });
       res.status(200).json(userFounded);
     } else {
       res.status(400).json({ message: "Member not found" });
@@ -208,9 +195,9 @@ router.post("/user/search", async (req, res) => {
 router.get("/user/informations/:id", isAuthenticated, async (req, res) => {
   try {
     if (req.params.id) {
-      const userFounded = await User.findById(req.params.id).populate(
-        "articles"
-      );
+      const userFounded = await User.findById(req.params.id)
+        .populate("articles")
+        .populate("reviews");
       res.status(200).json(userFounded);
     } else {
       res.status(400).json({ message: "User not founded" });

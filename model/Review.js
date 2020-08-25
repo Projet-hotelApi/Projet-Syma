@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const User = mongoose.model("Review", {
+const Review = mongoose.model("Review", {
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -8,4 +8,4 @@ const User = mongoose.model("Review", {
   ratingNumber: Number,
   description: String,
 });
-module.exports = User;
+module.exports = Review;

@@ -16,6 +16,8 @@ const isAuthenticated = require("./middleware/isAuthenticated");
 app.use(isAuthenticated);
 const reviewRoute = require("./routes/review");
 app.use(reviewRoute);
+const formulaireRoute = require("./routes/formulaire");
+app.use(formulaireRoute);
 // const paymentRoute = require("./routes/payment");
 // app.use(paymentRoute);
 
