@@ -140,8 +140,6 @@ router.post("/ad/publish", isAuthenticated, async (req, res) => {
   }
 });
 
-// OK mais renvoi creator : id au lieu de creator : username ?
-// permettra au clic sur le creator de faire la recherche user/search par username !
 router.get("/ad", async (req, res) => {
   try {
     const ad = await Ad.find().populate("creator");
@@ -177,9 +175,13 @@ router.get("/ad", async (req, res) => {
 router.get("/ad/informations/:id", async (req, res) => {
   try {
     if (req.params.id) {
-      const ad = await Ad.findById(req.params.id)
-        .populate("creator")
-        .populate("reviews");
+      const ad = await Ad.findById(req.params.id).populate({
+        path: "creator",
+        populate: {
+          path: "reviews",
+        },
+      });
+
       res.status(200).json(ad);
     } else {
       res.status(400).json({ message: error.message });
