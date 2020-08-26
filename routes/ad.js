@@ -219,6 +219,8 @@ router.post("/ad/publish/update/:id", isAuthenticated, async (req, res) => {
           //console.log(result);
           //console.log(req.files);
           //console.log(req.files.picture);
+
+          adFounded.picture.splice(adFounded.picture.length - 1, 1);
           adFounded.picture.unshift(result.secure_url);
           // cannot read property push of null
           await adFounded.save();
