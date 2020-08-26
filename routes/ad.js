@@ -21,8 +21,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// body - form-data
-// Pb de photos :
 // UPDATER PLUSIEURS IMAGES, CHECKER COURS SUR CLOUDINARY !!
 // https://apollo.lereacteur.io/course/5e189e582182e808620a935a?c=ckbdclxrs008r0ntk4lmnafws
 // video cours Farid upload cloudinary à partir de 20 min
