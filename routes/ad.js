@@ -3,7 +3,7 @@ const formidable = require("express-formidable");
 const router = express.Router();
 const cloudinary = require("cloudinary").v2;
 
-// const stripe = require("stripe")("sk_test_votreCléPrivée");
+const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 //const userRoute = require("./user");
 const user = require("../routes/user");
@@ -333,7 +333,6 @@ router.get("/ad/sort", async (req, res) => {
   }
 });
 
-// PAS TESTER
 router.get("/ad/user/:id", async (req, res) => {
   try {
     if (req.params.id) {
@@ -364,31 +363,38 @@ router.get("/ad/user/:id", async (req, res) => {
   }
 });
 
-// router.post("/payment/:id", isAuthenticated, async (req, res) => {
-//   try {
-//     // const userFounded = await User.findById(req.params.id);
-//     // if (userFounded) {
-//     //   const adFounded = await Ad.findById(req.params.id);
-//     //   if (adFounded) {
-//     const stripeToken = req.fields.stripeToken;
-//     const response = await stripe.charges.create({
-//       amount: req.fields.price,
-//       currency: "eur",
-//       description: "Acheter " + req.fields.title + " à : " + req.fields.user,
-//       source: stripeToken,
-//     });
-//     // sauvegarder la transaction dans commandes, model User
-//     // await userFounded.commandes.push(response);
-//     // faire state = true dans model Ad qu'on passe à false
-//     console.log(response.status);
-//     res.status(200).json(response);
-//     //   }
-//     // }
-//   } catch (error) {
-//     console.log(error.message);
-//     res.status(400).json({ message: error.message });
-//   }
-// });
+router.post("/payment/:id", isAuthenticated, async (req, res) => {
+  try {
+    if (req.params.id) {
+      const adFounded = await Ad.findById(req.params.id);
+      console.log(adFounded); // OK
+      // Réception Token
+      //const stripeToken = req.fields.stripeToken;
+      // Transaction
+      const response = await stripe.charges.create({
+        amount: req.fields.options.price + 3.2,
+        currency: "eur",
+        description:
+          "Acheter " +
+          req.fields.options.title +
+          " à : " +
+          req.fields.options.username,
+        source: req.fields.options.token,
+      });
+      // await Ad.push(req.user.commandes);
+      // await Ad.deleteOne(req.params.id)
+      console.log(req.fields.price);
+      console.log(amount);
+      console.log(response.status);
+      res.status(200).json(response);
+    } else {
+      res.status(400).json({ message: "Missing parameters" });
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
+  }
+});
 
 module.exports = router;
 
