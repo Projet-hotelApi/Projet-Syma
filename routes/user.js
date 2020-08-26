@@ -8,9 +8,12 @@ const mailgun = require("mailgun-js");
 //const mailgun = require("mailgun-js")({ apiKey: API_KEY, domain: DOMAIN });
 
 const User = require("../model/User");
+const Ad = require("../model/Ad");
+const ad = require("../routes/ad");
 const Review = require("../model/Review");
 const review = require("../routes/review");
 const isAuthenticated = require("../middleware/isAuthenticated");
+const { getMaxListeners } = require("../model/User");
 
 const API_KEY = process.env.MAILGUN_API_KEY;
 const DOMAIN = process.env.MAILGUN_DOMAIN;
@@ -135,38 +138,34 @@ router.post("/user/log-in", async (req, res) => {
 // OK
 router.post("/user/delete", isAuthenticated, async (req, res) => {
   try {
-    //console.log("pass", req.fields.password); // OK
-    //console.log("user", req.fields.username); // OK
-    if (req.fields.username && req.fields.password) {
-      const userFounded = await User.findOne({ username: req.fields.username });
-      //  console.log("userFounded", userFounded);
-      if (
-        SHA256(req.fields.password + userFounded.salt).toString(encBase64) ===
-        userFounded.hash
-      ) {
-        // if (userFounded.articles.length !== 0) {
-        //   supprimer les annonces de l'utilisateur
-        // }
-        await userFounded.deleteOne();
-        // Obtenir req.fields.email + req.fields.name
-        //  const data = {
-        //    from : "Syma <syma@" + MAILGUN_DOMAIN + ">",
-        //    to : req.fields.email,
-        //    subject : "SyMa - Account deleted",
-        //    text : "Dear" + req.fields.firstName + "\br Votre compte a bien été supprimé. "
-        //  }
-        //  mailgun.messages().send(data, (error, body) => {
-        //   console.log(body);
-        //   console.log(error);
-        // });
-        res.status(200).json({ message: "Account deleted" });
-      } else {
-        res.status(400).json({ message: "Please try again" });
-      }
+    //console.log(req.user);
+    //const userOceane = await User.findOne({ username: "Oceane64" });
+    if (req.fields.username === "Oceane64") {
+      res.status(400).json({ message: "Le compte d'Océane ne peut etre supp" });
     } else {
-      res
-        .status(400)
-        .json({ message: "Please enter your username and password" });
+      if (req.fields.username && req.fields.password) {
+        const userFounded = await User.findOne({
+          username: req.fields.username,
+        }).populate("articles");
+        //console.log(userFounded.articles);
+        if (
+          SHA256(req.fields.password + userFounded.salt).toString(encBase64) ===
+          userFounded.hash
+        ) {
+          let articlesFounded = await Ad.findOneAndRemove({
+            creator: userFounded._id,
+          });
+          console.log("articlesFounded", articlesFounded);
+          await userFounded.deleteOne();
+          res.status(200).json({ message: "Account deleted" });
+        } else {
+          res.status(400).json({ message: "Please try again" });
+        }
+      } else {
+        res
+          .status(400)
+          .json({ message: "Please enter your username and password" });
+      }
     }
   } catch (error) {
     console.log(error.message);
@@ -209,82 +208,94 @@ router.get("/user/informations/:id", isAuthenticated, async (req, res) => {
 });
 
 router.post("/user/update-account/:id", isAuthenticated, async (req, res) => {
-  console.log(
-    "fields",
-    req.fields.email,
-    req.fields.username,
-    req.fields.postalCode
-  );
-  console.log("file", req.files);
+  //console.log(
+  //   "fields",
+  //   req.fields.email,
+  //   req.fields.username,
+  //   req.fields.postalCode
+  // );
+  //console.log("file", req.files);
   try {
-    if (req.params.id) {
-      const userFounded = await User.findById(req.params.id);
-      if (
-        req.fields.email ||
-        req.fields.username ||
-        req.fields.postalCode ||
-        req.fields.city ||
-        req.fields.address ||
-        req.fields.description ||
-        req.files.photo
-      ) {
-        if (req.fields.email) {
-          // OK
-          const userFounded = await User.findByIdAndUpdate(req.params.id, {
-            email: req.fields.email,
-          });
-          await userFounded.save();
-        }
-        if (req.fields.username) {
-          // OK
-          const userFounded = await User.findByIdAndUpdate(req.params.id, {
-            username: req.fields.username,
-          });
-          await userFounded.save();
-        }
-        if (req.fields.description) {
-          // OK
-          const userFounded = await User.findByIdAndUpdate(req.params.id, {
-            description: req.fields.description,
-          });
-          await userFounded.save();
-        }
-        if (req.fields.postalCode) {
-          // OK
-          const userFounded = await User.findById(req.params.id);
-          userFounded.personnal.postalCode = req.fields.postalCode;
-          await userFounded.save();
-        }
-        if (req.fields.city) {
-          // OK
-          const userFounded = await User.findById(req.params.id);
-          userFounded.personnal.city = req.fields.city;
-          await userFounded.save();
-        }
-        if (req.fields.address) {
-          // OK
-          const userFounded = await User.findById(req.params.id);
-          userFounded.personnal.address = req.fields.address;
-          await userFounded.save();
-        }
-        if (req.files.photo) {
-          console.log(1);
-          console.log(req.files.photo.path);
-          const userFounded = await User.findById(req.params.id);
-          console.log(2);
-          const result = await cloudinary.uploader.upload(req.files.photo.path);
-          console.log(result.secure_url);
-          // console.log("result", result.path);
-          userFounded.picture.push(result.secure_url);
-          console.log(4);
-          await userFounded.save();
-        }
-        res.status(200).json(userFounded);
-      } else {
-        res.status(400).json({ message: "Changes unauthorized" });
-      }
+    const userOceane = await User.findById({ _id: "5f4543b147ff0d1d2f429b53" });
+    console.log(userOceane);
+
+    if (req.params.id === "5f4543b147ff0d1d2f429b53") {
+      res
+        .status(400)
+        .json({ message: "Le compte d'Océane ne peut être modifié" });
     } else {
-      res.status(400).json({ message: "Unauthorized" });
+      if (req.params.id) {
+        const userFounded = await User.findById(req.params.id);
+
+        if (
+          req.fields.email ||
+          req.fields.username ||
+          req.fields.postalCode ||
+          req.fields.city ||
+          req.fields.address ||
+          req.fields.description ||
+          req.files.photo
+        ) {
+          if (req.fields.email) {
+            // OK
+            const userFounded = await User.findByIdAndUpdate(req.params.id, {
+              email: req.fields.email,
+            });
+            await userFounded.save();
+          }
+          if (req.fields.username) {
+            // OK
+            const userFounded = await User.findByIdAndUpdate(req.params.id, {
+              username: req.fields.username,
+            });
+            await userFounded.save();
+          }
+          if (req.fields.description) {
+            // OK
+            const userFounded = await User.findByIdAndUpdate(req.params.id, {
+              description: req.fields.description,
+            });
+            await userFounded.save();
+          }
+          if (req.fields.postalCode) {
+            // OK
+            const userFounded = await User.findById(req.params.id);
+            userFounded.personnal.postalCode = req.fields.postalCode;
+            await userFounded.save();
+          }
+          if (req.fields.city) {
+            // OK
+            const userFounded = await User.findById(req.params.id);
+            userFounded.personnal.city = req.fields.city;
+            await userFounded.save();
+          }
+          if (req.fields.address) {
+            // OK
+            const userFounded = await User.findById(req.params.id);
+            userFounded.personnal.address = req.fields.address;
+            await userFounded.save();
+          }
+          if (req.files.photo) {
+            console.log(1);
+            console.log(req.files.photo.path);
+            const userFounded = await User.findById(req.params.id);
+            console.log(2);
+            const result = await cloudinary.uploader.upload(
+              req.files.photo.path
+            );
+            console.log(result.secure_url);
+            // console.log("result", result.path);
+            userFounded.picture.push(result.secure_url);
+            console.log(4);
+            await userFounded.save();
+          }
+          res.status(200).json(userFounded);
+        } else {
+          res.status(400).json({ message: "Changes unauthorized" });
+        }
+      } else {
+        res.status(400).json({ message: "Unauthorized" });
+      }
     }
   } catch (error) {
     console.log(error.message);

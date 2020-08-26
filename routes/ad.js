@@ -88,17 +88,6 @@ router.post("/ad/publish", isAuthenticated, async (req, res) => {
 
                 //await user.articles.push(newAd)
 
-                // Obtenir req.fields.username & req.fields.email
-                //  const data = {
-                //    from : "Syma <syma@" + MAILGUN_DOMAIN + ">",
-                //    to : req.fields.email,
-                //    subject : "SyMa - Your recently created account",
-                //    text : "Dear" + req.fields.firstName + "\br Un article a été ajouté ! Voici les détails : "
-                //  }
-                //  mailgun.messages().send(data, (error, body) => {
-                //   console.log(body);
-                //   console.log(error);
-                // });
                 res.status(200).json({
                   id: newAd.id,
                   title: newAd.title,
@@ -142,26 +131,22 @@ router.post("/ad/publish", isAuthenticated, async (req, res) => {
 
 router.get("/ad", async (req, res) => {
   try {
-    const ad = await Ad.find().populate("creator");
-    //  res.status(200).json(ad);
-    console.log(ad);
+    const ad = await Ad.find().populate("creator").sort({ created: "desc" });
+    //console.log(ad);
     res.status(200).json(ad);
-    // json({
-    //   id: ad.id,
-    //   title: ad.title,
-    //   description: ad.description,
-    //   price: ad.price,
-    //   picture: ad.picture,
-    //   // ad.creator,
-    //   creator: {
-    //     username: ad.creator.username,
-    //     id: ad.creator.id,
-    //   },
-    //   created: ad.created,
-    //   condition: ad.condition,
-    //   brand: ad.brand,
-    //   size: ad.size,
-    // });
+    //    let sort = {};
+    // if (req.query.sort === "date-asc") {
+    //   sort = { created: "asc" };
+    // } else if (req.query.sort === "date-desc") {
+    //   sort = { created: "desc" };
+    // }
+    // if (req.query.sort === "price-asc") {
+    //   sort = { price: "asc" };
+    // } else if (req.query.sort === "price-desc") {
+    //   sort = { price: "asc" };
+    // }
+
+    // const ad = await Ad.find(filters).sort(sort).populate("creator");
   } catch (error) {
     console.log(error.message);
     res.status(400).json({ message: error.message });
@@ -392,9 +377,9 @@ router.get("/ad/user/:id", async (req, res) => {
 //       description: "Acheter " + req.fields.title + " à : " + req.fields.user,
 //       source: stripeToken,
 //     });
-//     // sauvegarder la transaction => commandes, model User ??
+//     // sauvegarder la transaction dans commandes, model User
 //     // await userFounded.commandes.push(response);
-//     // supprime add (reference pour ad/delete/id) - faire copier / coller
+//     // faire state = true dans model Ad qu'on passe à false
 //     console.log(response.status);
 //     res.status(200).json(response);
 //     //   }
