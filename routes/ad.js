@@ -365,6 +365,7 @@ router.get("/ad/user/:id", async (req, res) => {
 
 router.post("/payment/:id", isAuthenticated, async (req, res) => {
   try {
+    console.log("essai");
     if (req.params.id) {
       const adFounded = await Ad.findById(req.params.id);
       //console.log(adFounded); // OK
