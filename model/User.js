@@ -38,5 +38,11 @@ const User = mongoose.model("User", {
       ref: "Review",
     },
   ],
+  ventes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Ad",
+    },
+  ],
 });
 module.exports = User;

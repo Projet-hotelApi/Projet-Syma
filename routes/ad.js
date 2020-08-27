@@ -379,8 +379,9 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
           req.fields.options.title +
           " à : " +
           req.fields.options.username,
-        source: req.fields.options.token,
+        source: req.fields.options.tokenStripe,
       });
+      // Faire distinction entre ventes (vendeur) et commandes (acheteur)
       // await Ad.push(req.user.commandes);
       // await Ad.deleteOne(req.params.id)
       console.log(req.fields.price);
