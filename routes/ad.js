@@ -389,13 +389,14 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
       await User.findByIdAndUpdate(req.user._id, {
         commandes: commandes,
       });
-      adFounded = await Ad.findById(req.params.id);
-      await adFounded.deleteOne();
+      const adToDelete = await Ad.findById(req.params.id);
+      await adToDelete.deleteOne();
       // Faire distinction entre ventes (vendeur) e
       // await Ad.push(req.user.commandes);
       // await Ad.deleteOne(req.params.id)
       console.log(response);
-      res.status(200).json(response);
+      //res.status(200).json(response);
+      res.status(200).json({ message: "Achat confirmé" });
     } else {
       res.status(400).json({ message: "Missing parameters" });
     }
