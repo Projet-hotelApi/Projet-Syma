@@ -366,8 +366,7 @@ router.get("/ad/user/:id", async (req, res) => {
 router.post("/payment/:id", isAuthenticated, async (req, res) => {
   try {
     if (req.params.id) {
-      const adFounded = await Ad.findById(req.params.id);
-
+      const adFounded = await Ad.findById(req.params.id).populate("creator");
       //console.log(adFounded); // OK
       // Réception Token
       const stripeToken = req.fields.stripeToken;
@@ -379,9 +378,19 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
           "Votre achat concerne : " +
           adFounded.title +
           " " +
-          adFounded.description,
+          adFounded.description +
+          " à " +
+          adFounded.creator.username,
         // On envoie ici le token
         source: "tok_mastercard",
+      });
+      let commandes = req.user.commandes;
+      commandes.push({
+        response,
+        adFounded,
+      });
+      await User.findByIdAndUpdate(req.user._id, {
+        commandes: commandes,
       });
       // Faire distinction entre ventes (vendeur) et commandes (acheteur)
       // await Ad.push(req.user.commandes);

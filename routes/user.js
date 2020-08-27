@@ -13,7 +13,7 @@ const ad = require("../routes/ad");
 const Review = require("../model/Review");
 const review = require("../routes/review");
 const isAuthenticated = require("../middleware/isAuthenticated");
-const { getMaxListeners } = require("../model/User");
+//const { getMaxListeners } = require("../model/User");
 
 const API_KEY = process.env.MAILGUN_API_KEY;
 const DOMAIN = process.env.MAILGUN_DOMAIN;
