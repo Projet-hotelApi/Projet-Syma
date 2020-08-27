@@ -368,15 +368,13 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
     if (req.params.id) {
       const adFounded = await Ad.findById(req.params.id);
       console.log(adFounded); // OK
-
       // Réception Token
-      //const stripeToken = req.fields.stripeToken;
+      const stripeToken = req.fields.stripeToken;
       // Transaction
       const response = await stripe.charges.create({
         amount: adFounded.price + 3.2,
         currency: "eur",
         description: adFounded.title + adFounded.description,
-
         source: "tok_mastercard",
       });
       // Faire distinction entre ventes (vendeur) et commandes (acheteur)
