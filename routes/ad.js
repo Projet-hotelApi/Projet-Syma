@@ -376,7 +376,9 @@ router.get("/ad/user/:id", async (req, res) => {
 router.post("/payment/:id", isAuthenticated, async (req, res) => {
   try {
     if (req.params.id) {
+      // on récupère l'annonce id et son créateur (vendeur)
       const adFounded = await Ad.findById(req.params.id).populate("creator");
+      //console.log(adFounded.creator);
       const stripeToken = req.fields.stripeToken;
       const response = await stripe.charges.create({
         amount: adFounded.price * 100 + 3,
@@ -390,18 +392,24 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
           adFounded.creator.username,
         source: "tok_mastercard",
       });
+      // on passe à true l'annonce
       const adPurchased = await Ad.findByIdAndUpdate(req.params.id, {
         purchased: true,
       });
+      // on push ad dans commandes dans le isAuthenticated : Acheteur
       let commandes = req.user.commandes;
       commandes.push(adFounded);
       await User.findByIdAndUpdate(req.user._id, {
         commandes: commandes,
       });
-      // const adToDelete = await Ad.findById(req.params.id);
-      // await adToDelete.deleteOne();
       // PUSH DANS ventes (vendeur)
-      //console.log(response);
+      let ventes = adFounded.creator.ventes;
+      ventes.push(adFounded);
+      await User.findByIdAndUpdate(adFounded.creator._id, {
+        ventes: ventes,
+      });
+      console.log(adFounded.creator);
+      //console.log();
       res.status(200).json({ message: "Achat confirmé" });
     } else {
       res.status(400).json({ message: "Missing parameters" });

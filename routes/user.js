@@ -230,6 +230,23 @@ router.get("/user/mes-commandes", isAuthenticated, async (req, res) => {
   }
 });
 
+router.get("/user/mes-ventes", isAuthenticated, async (req, res) => {
+  try {
+    if (req.user) {
+      const userFounded = await User.findById(req.user._id).populate({
+        path: "ventes",
+      });
+      console.log(userFounded);
+      res.status(200).json(userFounded);
+    } else {
+      res.status(400).json({ message: "User not founded" });
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
+  }
+});
+
 router.post("/user/update-account/:id", isAuthenticated, async (req, res) => {
   //console.log(
   //   "fields",
