@@ -372,19 +372,17 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
       // Réception Token
       //const stripeToken = req.fields.stripeToken;
       // Transaction
-      // const response = await stripe.charges.create({
-      //   amount: req.fields.options.price + 3.2,
-      //   currency: "eur",
-      //   description:
-      //     "Acheter " +
-      //     req.fields.options.title +
-      //     " à : " +
-      //     req.fields.options.username,
-      //   // source: req.fields.options.tokenStripe,
-      // });
+      const response = await stripe.charges.create({
+        amount: adFounded.price + 3.2,
+        currency: "eur",
+        description: adFounded.title + adFounded.description,
+
+        source: "tok_mastercard",
+      });
       // Faire distinction entre ventes (vendeur) et commandes (acheteur)
       // await Ad.push(req.user.commandes);
       // await Ad.deleteOne(req.params.id)
+      console.log(response);
       res.status(200).json(response);
     } else {
       res.status(400).json({ message: "Missing parameters" });
