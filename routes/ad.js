@@ -367,7 +367,8 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
   try {
     if (req.params.id) {
       const adFounded = await Ad.findById(req.params.id);
-      console.log(adFounded); // OK
+      //console.log(adFounded); // OK
+      console.log("essai");
       // Réception Token
       //const stripeToken = req.fields.stripeToken;
       // Transaction
@@ -379,7 +380,7 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
           req.fields.options.title +
           " à : " +
           req.fields.options.username,
-        source: req.fields.options.tokenStripe,
+        // source: req.fields.options.tokenStripe,
       });
       // Faire distinction entre ventes (vendeur) et commandes (acheteur)
       // await Ad.push(req.user.commandes);
