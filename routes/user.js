@@ -208,10 +208,10 @@ router.get("/user/informations/:id", isAuthenticated, async (req, res) => {
   }
 });
 
-router.get("/user/mes-commandes/:id", isAuthenticated, async (req, res) => {
+router.get("/user/mes-commandes", isAuthenticated, async (req, res) => {
   try {
-    if (req.params.id) {
-      const userFounded = await User.findById(req.params.id).populate({
+    if (req.user) {
+      const userFounded = await User.findById(req.user._id).populate({
         path: "commandes",
         populate: {
           path: "creator",
