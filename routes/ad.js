@@ -367,7 +367,7 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
   try {
     if (req.params.id) {
       const adFounded = await Ad.findById(req.params.id);
-      console.log(adFounded.price * 100 + 3);
+
       //console.log(adFounded); // OK
       // Réception Token
       const stripeToken = req.fields.stripeToken;
@@ -375,7 +375,11 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
       const response = await stripe.charges.create({
         amount: adFounded.price * 100 + 3,
         currency: "eur",
-        description: "La description",
+        description:
+          "Votre achat concerne : " +
+          adFounded.title +
+          " " +
+          adFounded.description,
         // On envoie ici le token
         source: "tok_mastercard",
       });
