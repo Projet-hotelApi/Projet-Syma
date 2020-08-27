@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const User = mongoose.model("Ad", {
+const Ad = mongoose.model("Ad", {
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -16,5 +16,6 @@ const User = mongoose.model("Ad", {
   condition: String,
   brand: String,
   size: Number,
+  purchased: { type: Boolean, default: false },
 });
-module.exports = User;
+module.exports = Ad;

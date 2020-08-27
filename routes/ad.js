@@ -131,7 +131,17 @@ router.get("/ad", async (req, res) => {
   try {
     const ad = await Ad.find().populate("creator").sort({ created: "desc" });
     //console.log(ad);
-    res.status(200).json(ad);
+    let adTab = [];
+    for (let i = 0; i < ad.length; i++) {
+      if (ad[i].purchased !== true) {
+        console.log(ad[i].purchased);
+        adTab.push(ad[i]);
+      }
+      //else if (ad[i].purchased === true) {
+      //   adPurchased.push(ad);
+      // }
+    }
+    return res.status(200).json(adTab);
     //    let sort = {};
     // if (req.query.sort === "date-asc") {
     //   sort = { created: "asc" };
@@ -367,10 +377,7 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
   try {
     if (req.params.id) {
       const adFounded = await Ad.findById(req.params.id).populate("creator");
-      //console.log(adFounded); // OK
-      // Réception Token
       const stripeToken = req.fields.stripeToken;
-      // Transaction
       const response = await stripe.charges.create({
         amount: adFounded.price * 100 + 3,
         currency: "eur",
@@ -381,18 +388,20 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
           adFounded.description +
           " à " +
           adFounded.creator.username,
-        // On envoie ici le token
         source: "tok_mastercard",
+      });
+      const adPurchased = await Ad.findByIdAndUpdate(req.params.id, {
+        purchased: true,
       });
       let commandes = req.user.commandes;
       commandes.push(adFounded);
       await User.findByIdAndUpdate(req.user._id, {
         commandes: commandes,
       });
-      const adToDelete = await Ad.findById(req.params.id);
-      await adToDelete.deleteOne();
+      // const adToDelete = await Ad.findById(req.params.id);
+      // await adToDelete.deleteOne();
       // PUSH DANS ventes (vendeur)
-      console.log(response);
+      //console.log(response);
       res.status(200).json({ message: "Achat confirmé" });
     } else {
       res.status(400).json({ message: "Missing parameters" });

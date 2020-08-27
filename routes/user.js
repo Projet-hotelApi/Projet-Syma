@@ -4,7 +4,7 @@ const cloudinary = require("cloudinary").v2;
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
 const uid2 = require("uid2");
-const mailgun = require("mailgun-js");
+//const mailgun = require("mailgun-js");
 //const mailgun = require("mailgun-js")({ apiKey: API_KEY, domain: DOMAIN });
 
 const User = require("../model/User");
@@ -15,9 +15,9 @@ const review = require("../routes/review");
 const isAuthenticated = require("../middleware/isAuthenticated");
 //const { getMaxListeners } = require("../model/User");
 
-const API_KEY = process.env.MAILGUN_API_KEY;
-const DOMAIN = process.env.MAILGUN_DOMAIN;
-const mg = mailgun({ apiKey: API_KEY, domain: DOMAIN });
+// const API_KEY = process.env.MAILGUN_API_KEY;
+// const DOMAIN = process.env.MAILGUN_DOMAIN;
+// const mg = mailgun({ apiKey: API_KEY, domain: DOMAIN });
 // changer mailgun address
 cloudinary.config({
   cloud_name: "dbxmpuzvk",
@@ -198,6 +198,28 @@ router.get("/user/informations/:id", isAuthenticated, async (req, res) => {
         .populate("articles")
         .populate("reviews")
         .populate("commandes");
+      res.status(200).json(userFounded);
+    } else {
+      res.status(400).json({ message: "User not founded" });
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.get("/user/mes-commandes/:id", isAuthenticated, async (req, res) => {
+  try {
+    if (req.params.id) {
+      const userFounded = await User.findById(req.params.id).populate({
+        path: "commandes",
+        populate: {
+          path: "creator",
+        },
+      });
+      console.log(userFounded);
+      //let commandes = userFounded.commandes;
+      //res.status(200).json(commandes);
       res.status(200).json(userFounded);
     } else {
       res.status(400).json({ message: "User not founded" });
