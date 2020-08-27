@@ -372,7 +372,7 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
       const stripeToken = req.fields.stripeToken;
       // Transaction
       const response = await stripe.charges.create({
-        amount: "45",
+        amount: "4500",
         currency: "eur",
         description: "essai",
         source: "tok_mastercard",
