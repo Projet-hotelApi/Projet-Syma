@@ -389,7 +389,9 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
       await User.findByIdAndUpdate(req.user._id, {
         commandes: commandes,
       });
-      // Faire distinction entre ventes (vendeur) et commandes (acheteur)
+      adFounded = await Ad.findById(req.params.id);
+      await adFounded.deleteOne();
+      // Faire distinction entre ventes (vendeur) e
       // await Ad.push(req.user.commandes);
       // await Ad.deleteOne(req.params.id)
       console.log(response);
