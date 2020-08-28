@@ -396,7 +396,7 @@ router.post("/payment/:id", isAuthenticated, async (req, res) => {
       const adPurchased = await Ad.findByIdAndUpdate(req.params.id, {
         purchased: true,
       });
-      // on push ad dans commandes dans le isAuthenticated : Acheteur
+      // push ad dans commandes dans le isAuthenticated : Acheteur
       let commandes = req.user.commandes;
       commandes.push(adFounded);
       await User.findByIdAndUpdate(req.user._id, {
